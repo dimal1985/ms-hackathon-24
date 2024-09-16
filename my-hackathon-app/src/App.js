@@ -1,6 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
-import React, { useState } from 'react';
+import React, { useState, useEffect  } from 'react';
 import Globe from 'react-globe.gl';
 
 function App() {
@@ -26,26 +26,45 @@ function App() {
 }
 
 const GlobeComponent = () => {
-  const [selectedCountry, setSelectedCountry] = useState(null);
+  const [countries, setCountries] = useState({ features: []});
 
-  const handleCountryClick = (country) => {
+  useEffect(() => {
+    // load data
+    fetch('/ne_110m_admin_0_countries.geojson')
+      .then(res => 
+              res.json())
+      .then(setCountries);
+  }, []);
+
+  /*const handleCountryClick = (country) => {
     setSelectedCountry(country);
     // Fetch and display data for the selected country
-  };
+  };*/
 
   return (
     <div>
       <Globe
         globeImageUrl="//unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
-        polygonsData={[] /* your polygons data for countries */}
-        polygonAltitude={0.06}
+        hexPolygonsData={countries.features}
+        hexPolygonResolution={3}
+        hexPolygonMargin={0.3}
+        hexPolygonUseDots={true}
+        hexPolygonColor="rgba(200, 0, 0, 0.6)"
+        hexPolygonLabel=
+        {({ properties: d }) => `
+          <b>${d.ADMIN} (${d.ISO_A2})</b> <br />
+          Population: <i>${d.POP_EST}</i>
+        `}
+
+        /*polygonAltitude={0.06}
         polygonCapColor="rgba(200, 0, 0, 0.6)"
         polygonSideColor="rgba(255, 0, 0, 0.15)"
-        onPolygonClick={(event) => handleCountryClick(event.object)}
+        onPolygonClick= {(event) => {}} // {(event) => handleCountryClick(event.object)}*/
+
       />
-      {selectedCountry && (
+      {/*selectedCountry && */(
         <div>
-          <h3>Data for {selectedCountry.properties.name}</h3>
+          <h3>Data for {/*{selectedCountry.properties.name}*/}</h3>
           {/* Display your data here */}
         </div>
       )}
