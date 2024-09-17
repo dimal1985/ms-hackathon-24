@@ -79,7 +79,7 @@ const GlobeComponent = () => {
             return `
               <b>${d.ADMIN} (${d.ISO_A2})</b> <br />
               Population: <i>${d.POP_EST}</i> <br />
-              Antisemitic rank: <i>${countriesMap[d.ADMIN]}</i>
+              <i style="color: red">Antisemitic rank: ${countriesMap[d.ADMIN]}</i>
             `;
           }}
 
