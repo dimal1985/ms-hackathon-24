@@ -37,6 +37,34 @@ const GlobeComponent = () => {
       .then(setCountries);
   }, []);
 
+  const [countriesMap, setCountriesMap] = useState({});
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        for (let i = 0; i < countries.features.length; i++) {
+          const countryName = countries.features[i].properties.ADMIN;
+          const rank = await getAntisemiticRankForCountry(countryName);
+          setCountriesMap(prevState => ({
+            ...prevState,
+            [countryName]: rank
+          }));
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [countries]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div>
       <Globe
@@ -47,12 +75,11 @@ const GlobeComponent = () => {
         hexPolygonUseDots={false}
         hexPolygonColor="rgba(200, 0, 0, 0.6)"
         hexPolygonLabel=
-          {async ({ properties: d }) => {
-            const rank = await getAntisemiticRankForCountry(d.ADMIN);
+          {({ properties: d }) => {
             return `
               <b>${d.ADMIN} (${d.ISO_A2})</b> <br />
               Population: <i>${d.POP_EST}</i> <br />
-              Antisemitic rank: <i>${rank}</i>
+              Antisemitic rank: <i>${countriesMap[d.ADMIN]}</i>
             `;
           }}
 
