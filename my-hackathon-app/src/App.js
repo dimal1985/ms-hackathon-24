@@ -1,5 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
+import {getAntisemiticRankForCountry} from './AntisemiticCalc.js';
 import React, { useState, useEffect  } from 'react';
 import Globe from 'react-globe.gl';
 
@@ -36,30 +37,24 @@ const GlobeComponent = () => {
       .then(setCountries);
   }, []);
 
-  /*const handleCountryClick = (country) => {
-    setSelectedCountry(country);
-    // Fetch and display data for the selected country
-  };*/
-
   return (
     <div>
       <Globe
         globeImageUrl="//unpkg.com/three-globe/example/img/earth-blue-marble.jpg"
         hexPolygonsData={countries.features}
         hexPolygonResolution={3}
-        hexPolygonMargin={0.3}
-        hexPolygonUseDots={true}
+        hexPolygonMargin={0.1}
+        hexPolygonUseDots={false}
         hexPolygonColor="rgba(200, 0, 0, 0.6)"
         hexPolygonLabel=
-        {({ properties: d }) => `
-          <b>${d.ADMIN} (${d.ISO_A2})</b> <br />
-          Population: <i>${d.POP_EST}</i>
-        `}
-
-        /*polygonAltitude={0.06}
-        polygonCapColor="rgba(200, 0, 0, 0.6)"
-        polygonSideColor="rgba(255, 0, 0, 0.15)"
-        onPolygonClick= {(event) => {}} // {(event) => handleCountryClick(event.object)}*/
+          {async ({ properties: d }) => {
+            const rank = await getAntisemiticRankForCountry(d.ADMIN);
+            return `
+              <b>${d.ADMIN} (${d.ISO_A2})</b> <br />
+              Population: <i>${d.POP_EST}</i> <br />
+              Antisemitic rank: <i>${rank}</i>
+            `;
+          }}
 
       />
       {/*selectedCountry && */(
