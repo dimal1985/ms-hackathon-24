@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 import {getAntisemiticRankForCountry} from './AntisemiticCalc.js';
 import React, { useState, useEffect  } from 'react';
